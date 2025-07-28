@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HMAC Test</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .test-result {
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0.5rem;
+            font-family: monospace;
+        }
+        .success { background-color: #dcfce7; color: #166534; }
+        .error { background-color: #fef2f2; color: #dc2626; }
+    </style>
+</head>
+<body>
+    <h1>HMAC Functionality Test</h1>
+    <p>This page tests the HMAC functionality using Web Crypto API.</p>
+    
+    <div id="results"></div>
+
+    <script>
+        async function testHMAC() {
+            const results = document.getElementById('results');
+            
+            try {
+                // Test data
+                const payload = '{"test": "data"}';
+                const secret = 'my-secret-key';
+                const expectedSignature = 'expected-signature-here'; // This would be the actual expected signature
+                
+                // Generate HMAC
+                const encoder = new TextEncoder();
+                const keyData = encoder.encode(secret);
+                const messageData = encoder.encode(payload);
+                
+                const cryptoKey = await crypto.subtle.importKey(
+                    'raw',
+                    keyData,
+                    { name: 'HMAC', hash: 'SHA-256' },
+                    false,
+                    ['sign', 'verify']
+                );
+                
+                const signature = await crypto.subtle.sign('HMAC', cryptoKey, messageData);
+                const signatureArray = new Uint8Array(signature);
+                const base64Signature = btoa(String.fromCharCode(...signatureArray));
+                
+                // Verify the signature
+                const isValid = await crypto.subtle.verify('HMAC', cryptoKey, signatureArray, messageData);
+                
+                results.innerHTML = `
+                    <div class="test-result success">
+                        <h3>✅ HMAC Test Successful</h3>
+                        <p><strong>Payload:</strong> ${payload}</p>
+                        <p><strong>Secret:</strong> ${secret}</p>
+                        <p><strong>Generated Signature:</strong> ${base64Signature}</p>
+                        <p><strong>Verification:</strong> ${isValid ? 'Valid' : 'Invalid'}</p>
+                    </div>
+                `;
+                
+            } catch (error) {
+                results.innerHTML = `
+                    <div class="test-result error">
+                        <h3>❌ HMAC Test Failed</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Run test when page loads
+        testHMAC();
+    </script>
+</body>
+</html> 
