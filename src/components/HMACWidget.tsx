@@ -18,6 +18,7 @@ export const HMACWidget: React.FC = () => {
   const [receivedSignature, setReceivedSignature] = useState<string>('');
   const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const [isCopied, setIsCopied] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
   const getAlgorithmName = useCallback((algo: HMACAlgorithm): string => {
@@ -140,6 +141,8 @@ export const HMACWidget: React.FC = () => {
   const copyToClipboard = useCallback(async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
     } catch (err) {
       console.error('Failed to copy to clipboard:', err);
     }
@@ -228,9 +231,16 @@ export const HMACWidget: React.FC = () => {
                 className="copy-btn"
                 onClick={() => copyToClipboard(generatedSignature)}
                 title="Copy signature"
-                style={{ marginLeft: '1rem', flexShrink: 0 }}
+                style={{ 
+                  marginLeft: '1rem', 
+                  flexShrink: 0,
+                  backgroundColor: isCopied ? 'var(--success-color)' : 'transparent',
+                  color: isCopied ? 'white' : 'var(--text-secondary)',
+                  borderColor: isCopied ? 'var(--success-color)' : 'var(--border-color)',
+                  transition: 'all 0.2s ease'
+                }}
               >
-                Copy
+                {isCopied ? 'Copied!' : 'Copy'}
               </button>
             </div>
           ) : (
