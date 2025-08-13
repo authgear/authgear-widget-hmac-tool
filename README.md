@@ -2,6 +2,10 @@
 
 A web-based tool for generating and verifying HMAC signatures using the Web Crypto API.
 
+## 🌐 Live Demo
+
+**[Try the tool online at https://www.authgear.com/tools/hmac-signature-generator-verifier](https://www.authgear.com/tools/hmac-signature-generator-verifier)**
+
 ## Features
 
 - Generate HMAC signatures (HS256, HS384, HS512)
